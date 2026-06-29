@@ -200,10 +200,10 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualInput]);
 
-  // First-letter hint on level 4 after 5s of inactivity
+  // First-letter hint on level 4 (финал) after 5s — но НЕ в режиме быстрого ввода.
   useEffect(() => {
-    if (!isFinale || answered) return;
     setShowFirstLetter(false);
+    if (!isFinale || answered || isFastInputEnabled()) return;
     const t = setTimeout(() => setShowFirstLetter(true), 5000);
     return () => clearTimeout(t);
   }, [currentLevel, answered, queueIdx]);
@@ -634,7 +634,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v0.99</span>
+          <span className="header-version">v0.991</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
