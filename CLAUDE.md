@@ -5,12 +5,12 @@
 PWA-приложение для изучения английских слов (бывш. WordPunk).
 React + TypeScript + Vite + IndexedDB (idb). Без бэкенда — всё локально.
 
-GitHub: https://github.com/emorozoff/Lemma
-Deploy: https://emorozoff.github.io/Lemma/
+GitHub: https://github.com/emorozoff/lemma
+Deploy: https://emorozoff.github.io/lemma/
 
 ## Версия
 
-Текущая версия: **v0.92**
+Текущая версия: **v0.93**
 
 Версия отображается в интерфейсе (хедер, рядом с логотипом).
 

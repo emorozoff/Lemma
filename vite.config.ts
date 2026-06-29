@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const isCapacitor = process.env.CAPACITOR === '1'
-const base = isCapacitor ? '/' : '/Lemma/'
+const base = isCapacitor ? '/' : '/lemma/'
 
 export default defineConfig({
   base,
