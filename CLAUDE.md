@@ -1,16 +1,16 @@
-# WordPunk — CLAUDE.md
+# Lemma — CLAUDE.md
 
 ## Проект
 
-PWA-приложение для изучения английских слов в стиле киберпанка.
+PWA-приложение для изучения английских слов (бывш. WordPunk).
 React + TypeScript + Vite + IndexedDB (idb). Без бэкенда — всё локально.
 
-GitHub: https://github.com/emorozoff/wordpunk
-Deploy: https://emorozoff.github.io/WordPunk/
+GitHub: https://github.com/emorozoff/Lemma
+Deploy: https://emorozoff.github.io/Lemma/
 
 ## Версия
 
-Текущая версия: **v0.87**
+Текущая версия: **v0.88**
 
 Версия отображается в интерфейсе (хедер, рядом с логотипом).
 

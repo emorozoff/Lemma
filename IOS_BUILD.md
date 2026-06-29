@@ -1,4 +1,4 @@
-# iOS Build — WordPunk
+# iOS Build — Lemma
 
 Нативная обёртка через Capacitor. Bundle ID: `com.emorozoff.wordpunk`.
 

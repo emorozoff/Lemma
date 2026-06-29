@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const isCapacitor = process.env.CAPACITOR === '1'
-const base = isCapacitor ? '/' : '/WordPunk/'
+const base = isCapacitor ? '/' : '/Lemma/'
 
 export default defineConfig({
   base,
@@ -13,9 +13,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
       manifest: {
-        name: 'WordPunk',
-        short_name: 'WordPunk',
-        description: 'Учи английские слова — дерзко и без нытья',
+        name: 'Lemma',
+        short_name: 'Lemma',
+        description: 'Учи английские слова в контексте',
         display: 'standalone',
         background_color: '#0d0d0d',
         theme_color: '#0d0d0d',

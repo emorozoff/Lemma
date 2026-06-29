@@ -1,14 +1,14 @@
 # Changelog
 
-Все заметные изменения в WordPunk документируются в этом файле.
+Все заметные изменения в Lemma документируются в этом файле.
 
 ## v0.87 — 2026-04-28
 - Capacitor iOS: нативная обёртка приложения (App ID `com.emorozoff.wordpunk`)
-- Иконка приложения и splash screen в стиле WordPunk (W_ неоново-зелёная)
+- Иконка приложения и splash screen в стиле Lemma (W_ неоново-зелёная)
 - Виброотдача через `@capacitor/haptics`: тап при верном ответе, warning при ошибке, success при успешном финале
 - StatusBar и SplashScreen — управление через `src/lib/native.ts`
 - `npm run ios:open` → открыть в Xcode для билда. См. `IOS_BUILD.md`
-- Vite base переключается на `/` при `CAPACITOR=1`, на `/WordPunk/` для GitHub Pages
+- Vite base переключается на `/` при `CAPACITOR=1`, на `/Lemma/` для GitHub Pages
 
 ## v0.862 — 2026-04-20
 - One-time nuke: сброс всех кешей, IndexedDB и localStorage у всех пользователей

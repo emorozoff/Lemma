@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.emorozoff.wordpunk',
-  appName: 'WordPunk',
+  appName: 'Lemma',
   webDir: 'dist',
   ios: {
     contentInset: 'always',

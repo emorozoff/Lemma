@@ -4,10 +4,11 @@ import './styles/global.css'
 import App from './App'
 
 const NUKE_VERSION = 1;
-const nukeKey = 'wp_nuke_v';
+const nukeKey = 'lemma_nuke_v';
 if (Number(localStorage.getItem(nukeKey)) < NUKE_VERSION) {
   caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))));
   indexedDB.deleteDatabase('wordpunk');
+  indexedDB.deleteDatabase('lemma');
   const keys = Object.keys(localStorage).filter(k => k !== nukeKey);
   keys.forEach(k => localStorage.removeItem(k));
   localStorage.setItem(nukeKey, String(NUKE_VERSION));

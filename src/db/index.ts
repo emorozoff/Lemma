@@ -1,7 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import type { Card, CardProgress, DayActivity, FlaggedCard } from '../types';
 
-interface WordPunkDB extends DBSchema {
+interface LemmaDB extends DBSchema {
   cards: {
     key: string;
     value: Card;
@@ -22,11 +22,11 @@ interface WordPunkDB extends DBSchema {
   };
 }
 
-let _db: IDBPDatabase<WordPunkDB> | null = null;
+let _db: IDBPDatabase<LemmaDB> | null = null;
 
-async function getDB(): Promise<IDBPDatabase<WordPunkDB>> {
+async function getDB(): Promise<IDBPDatabase<LemmaDB>> {
   if (_db) return _db;
-  _db = await openDB<WordPunkDB>('wordpunk', 2, {
+  _db = await openDB<LemmaDB>('lemma', 2, {
     upgrade(db, oldVersion) {
       if (oldVersion < 1) {
         const cardStore = db.createObjectStore('cards', { keyPath: 'id' });

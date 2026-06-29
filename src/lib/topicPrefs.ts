@@ -1,4 +1,4 @@
-const KEY = 'wordpunk_topic_prefs';
+const KEY = 'lemma_topic_prefs';
 
 // 0 = исключить, 1 = немного, 2 = очень интересно
 export type PrefLevel = 0 | 1 | 2;
