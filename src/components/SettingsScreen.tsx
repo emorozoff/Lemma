@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from 'react';
-import { clearAllProgress } from '../db';
+import { clearAllProgress, exportData, importData } from '../db';
 import { AudioMode, getAudioMode, setAudioMode, stopSpeech, isManualInputEnabled, setManualInputEnabled, isFastInputEnabled, setFastInputEnabled, preloadAllAudio } from '../lib/audio';
 import { useTheme } from './ThemeProvider';
 import { THEME_ORDER, THEME_LABELS } from '../lib/theme';
@@ -47,6 +47,47 @@ const SettingsScreen: FC<Props> = ({ onClose, onOpenTopics, onOpenAddWord, onPro
       () => stopRef.current,
     );
     setDl(prev => ({ ...prev, active: false }));
+  };
+
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [backupMsg, setBackupMsg] = useState('');
+
+  const handleExport = async () => {
+    const data = await exportData();
+    const settings: Record<string, string> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)!;
+      settings[k] = localStorage.getItem(k) ?? '';
+    }
+    const backup = { app: 'lemma', version: 1, exportedAt: new Date().toISOString(), ...data, settings };
+    const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lemma-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setBackupMsg('сохранено ✓');
+    setTimeout(() => setBackupMsg(''), 2500);
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const backup = JSON.parse(await file.text());
+      if (backup.app !== 'lemma') { setBackupMsg('это не бэкап Lemma'); return; }
+      await importData(backup);
+      if (backup.settings && typeof backup.settings === 'object') {
+        for (const [k, v] of Object.entries(backup.settings)) {
+          if (typeof v === 'string') localStorage.setItem(k, v);
+        }
+      }
+      location.reload();
+    } catch {
+      setBackupMsg('не удалось прочитать файл');
+    }
   };
 
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -176,6 +217,24 @@ const SettingsScreen: FC<Props> = ({ onClose, onOpenTopics, onOpenAddWord, onPro
             <div className="dl-bar-fill" style={{ width: `${Math.round((dl.done / dl.total) * 100)}%` }} />
           </div>
         )}
+
+        <div className="settings-row" onClick={handleExport}>
+          <span className="settings-label">сохранить прогресс</span>
+          <span className="settings-arrow">↓</span>
+        </div>
+
+        <div className="settings-row" onClick={() => fileRef.current?.click()}>
+          <span className="settings-label">восстановить прогресс</span>
+          <span className="settings-arrow">↑</span>
+        </div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json,.json"
+          onChange={handleImport}
+          style={{ display: 'none' }}
+        />
+        {backupMsg && <div className="settings-confirm-body">{backupMsg}</div>}
 
         <div className="settings-section-gap" />
 

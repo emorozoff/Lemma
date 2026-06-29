@@ -160,6 +160,47 @@ export async function clearAllProgress(): Promise<void> {
   await db.clear('activity');
 }
 
+// ── Backup / restore ─────────────────────────────────────────────────────────
+
+export interface BackupData {
+  progress: CardProgress[];
+  activity: DayActivity[];
+  flagged: FlaggedCard[];
+}
+
+export async function exportData(): Promise<BackupData> {
+  const db = await getDB();
+  const [progress, activity, flagged] = await Promise.all([
+    db.getAll('progress'),
+    db.getAll('activity'),
+    db.getAll('flagged'),
+  ]);
+  return { progress, activity, flagged };
+}
+
+// Полностью заменяет прогресс/активность/флаги данными из бэкапа.
+export async function importData(data: Partial<BackupData>): Promise<void> {
+  const db = await getDB();
+  {
+    const tx = db.transaction('progress', 'readwrite');
+    await tx.store.clear();
+    if (Array.isArray(data.progress)) for (const p of data.progress) await tx.store.put(p);
+    await tx.done;
+  }
+  {
+    const tx = db.transaction('activity', 'readwrite');
+    await tx.store.clear();
+    if (Array.isArray(data.activity)) for (const a of data.activity) await tx.store.put(a);
+    await tx.done;
+  }
+  {
+    const tx = db.transaction('flagged', 'readwrite');
+    await tx.store.clear();
+    if (Array.isArray(data.flagged)) for (const f of data.flagged) await tx.store.put(f);
+    await tx.done;
+  }
+}
+
 // ── Flagged cards ──────────────────────────────────────────────────────────
 
 export async function putFlagged(card: FlaggedCard): Promise<void> {
