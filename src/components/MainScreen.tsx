@@ -610,9 +610,9 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
       {/* Header */}
       <div className="header">
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
-          LEMMA
+          lemma_
 
-          <span className="header-version">v0.9</span>
+          <span className="header-version">v0.91</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
@@ -750,8 +750,8 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
       {/* Flag button — visible whenever a card is active */}
       {!isFinished && !loading && currentCard && (
         <div className="flag-row">
-          <button className={`flag-btn${flagged ? ' flag-btn-active' : ''}`} onClick={handleFlag}>
-            {flagged ? '⚑ ОТМЕЧЕНО' : '⚑ ФЛАГ'}
+          <button className={`flag-btn${flagged ? ' flag-btn-active' : ''}`} onClick={handleFlag} aria-label={flagged ? 'Снять отметку' : 'Отметить карточку'}>
+            ⚑
           </button>
         </div>
       )}

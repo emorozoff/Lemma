@@ -73,6 +73,8 @@ export default function App() {
       )}
 
       {blastActive && <SwearingBlast onDone={handleBlastDone} />}
+
+      <div className="scanline" />
     </div>
   );
 }
