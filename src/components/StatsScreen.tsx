@@ -1,5 +1,5 @@
 import { FC, useEffect, useState, useRef } from 'react';
-import { getAllProgress, getActivity, countCards, getArchivedCount, getAllFlagged, deleteFlagged, getKnownCount } from '../db';
+import { getAllProgress, getActivity, countCards, getAllFlagged, deleteFlagged, getKnownCount } from '../db';
 import type { FlaggedCard } from '../types';
 import type { DayActivity } from '../types';
 
@@ -20,7 +20,6 @@ const DISMISS_THRESHOLD = 100;
 const StatsScreen: FC<Props> = ({ onClose }) => {
   const [known, setKnown] = useState(0);
   const [total, setTotal] = useState(0);
-  const [archived, setArchived] = useState(0);
   const [flaggedCards, setFlaggedCards] = useState<FlaggedCard[]>([]);
   const [dist, setDist] = useState<Record<number, number>>({ 0:0,1:0,2:0,3:0,4:0 });
   const [activity, setActivity] = useState<DayActivity[]>([]);
@@ -31,16 +30,14 @@ const StatsScreen: FC<Props> = ({ onClose }) => {
 
   useEffect(() => {
     const load = async () => {
-      const [prog, act, cnt, arc, flagged, kc] = await Promise.all([
+      const [prog, act, cnt, flagged, kc] = await Promise.all([
         getAllProgress(),
         getActivity(90),
         countCards(),
-        getArchivedCount(),
         getAllFlagged(),
         getKnownCount(),
       ]);
       setTotal(cnt);
-      setArchived(arc);
       setFlaggedCards(flagged);
       setKnown(kc);
       const d: Record<number, number> = {0:0,1:0,2:0,3:0,4:0};
@@ -130,10 +127,6 @@ const StatsScreen: FC<Props> = ({ onClose }) => {
             <div className="stat-label">ВСЕГО слов</div>
           </div>
         </div>
-        {archived > 0 && (
-          <div className="stats-archived-row">знаю слов: {archived}</div>
-        )}
-
         <div className="stats-section-title">РАСПРЕДЕЛЕНИЕ ПО УРОВНЯМ</div>
         <div className="level-dist" style={{ marginBottom: 24 }}>
           {([0,1,2,3,4] as const).map(lvl => (
