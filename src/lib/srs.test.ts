@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   processAnswer, processLevel0Answer, processFinaleAnswer, checkManualAnswer,
   progressScore, getCurrentLevel, getLevelProgress, addDays,
-  generateOptions, buildQueue, MAX_LEVEL,
+  generateOptions, buildQueue, isSameLemmaRu, MAX_LEVEL,
 } from './srs';
 import type { Card, CardProgress } from '../types';
 
@@ -101,6 +101,24 @@ describe('levels', () => {
   });
 });
 
+describe('isSameLemmaRu (Layer 1 distractor filter)', () => {
+  it('merges word-forms of the same lemma', () => {
+    expect(isSameLemmaRu('дом', 'дома')).toBe(true);
+    expect(isSameLemmaRu('рука', 'руки')).toBe(true);
+    expect(isSameLemmaRu('дело', 'дела')).toBe(true);
+    expect(isSameLemmaRu('стоять', 'стоит')).toBe(true);
+    expect(isSameLemmaRu('стоять', 'стоял')).toBe(true);
+    expect(isSameLemmaRu('получать', 'получает')).toBe(true);
+  });
+  it('keeps different words apart (incl. synonyms = Layer 2)', () => {
+    expect(isSameLemmaRu('мама', 'мать')).toBe(false);
+    expect(isSameLemmaRu('карман', 'картинки')).toBe(false);
+    expect(isSameLemmaRu('стол', 'столица')).toBe(false);
+    expect(isSameLemmaRu('дом', 'дело')).toBe(false);
+    expect(isSameLemmaRu('кот', 'кит')).toBe(false);
+  });
+});
+
 describe('buildQueue practice-ahead (tier 3)', () => {
   const mk = (id: string, en: string, ru: string): Card => ({
     id, english: en, russian: ru, synonyms: [], topicId: 'basic', topicIds: ['basic'], isCustom: false,
@@ -140,5 +158,17 @@ describe('generateOptions', () => {
     expect(opts.length).toBe(4);
     expect(opts).toContain('яблоко');
     expect(new Set(opts).size).toBe(4);
+  });
+  it('never offers a same-lemma word-form as a distractor (дом vs дома)', () => {
+    const ru: Card[] = [
+      mk('1', 'house', 'дом'), mk('2', 'houses', 'дома'), mk('3', 'pocket', 'карман'),
+      mk('4', 'window', 'окно'), mk('5', 'door', 'дверь'), mk('6', 'table', 'стол'),
+    ];
+    for (let i = 0; i < 25; i++) {
+      const opts = generateOptions(ru[0]!, 'en-ru', ru);
+      expect(opts.length).toBe(4);
+      expect(opts).toContain('дом');
+      expect(opts).not.toContain('дома');
+    }
   });
 });

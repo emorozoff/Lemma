@@ -267,32 +267,64 @@ function normalizeText(s: string): string {
 // the correct answer — the user knows the word but taps the wrong form.
 // We exclude any candidate that looks like a different inflection of the
 // correct answer.
+// ── Русская «одна лемма» (Слой 1 отсечения дистракторов-словоформ) ──────────
+// Только СЛОВОИЗМЕНИТЕЛЬНЫЕ окончания (падеж/число/спряжение), без
+// словообразовательных (-ость/-ник/-ица) — чтобы не схлопывать разные слова.
+const RU_MULTI_ENDINGS = new Set([
+  'ть', 'ться', 'тся', 'чь',
+  'ла', 'ло', 'ли', 'ал', 'ял', 'ил', 'ел', 'ол', 'ул', 'ыл', 'ала', 'яла', 'ила', 'ела', 'ало', 'ило', 'али', 'или', 'ели',
+  'ешь', 'ишь', 'ет', 'ем', 'ете', 'ют', 'ут', 'ит', 'им', 'ите', 'ят', 'ат', 'аю', 'яю', 'ую', 'ает', 'ают', 'еет', 'еют',
+  'ать', 'ять', 'ить', 'еть', 'уть', 'оть', 'ыть',
+  'ах', 'ях', 'ам', 'ям', 'ом', 'ем', 'ой', 'ей', 'ов', 'ев', 'ми', 'ью', 'ия', 'ья', 'ями', 'ами', 'иях', 'иям', 'иями', 'ией', 'ием',
+  'ый', 'ий', 'ое', 'ее', 'ые', 'ие', 'ая', 'яя', 'ым', 'им', 'ых', 'их', 'ого', 'его', 'ому', 'ему', 'ыми', 'ими', 'юю', 'ою', 'ею',
+]);
+// Допустимый одиночный «хвост»: гласные + й/ь + л (прош. время м.р., стоя-л).
+const RU_SINGLE_TAIL = 'аеёиоуыэюяйьл';
+
+function normRu(s: string): string {
+  return s.trim().toLowerCase().replace(/ё/g, 'е');
+}
+function ruEndingOk(tail: string): boolean {
+  if (tail === '') return true;
+  if (tail.length === 1) return RU_SINGLE_TAIL.includes(tail);
+  return RU_MULTI_ENDINGS.has(tail);
+}
+// Одна ли лемма у двух русских переводов (дом/дома, стоять/стоял/стоит,
+// рука/руки). Эвристика: общий стем ≥3 символов, а различающиеся «хвосты» с
+// обеих сторон — флективные окончания. Намеренно склонна СХЛОПЫВАТЬ (лишний
+// дистрактор убрать безопаснее, чем показать две формы одного слова). НЕ её
+// зона: нерегулярные (мать/матери, друг/друзья) и разнокоренные синонимы
+// (мама/мать) — это Слой 2 (группы значения).
+export function isSameLemmaRu(a: string, b: string): boolean {
+  const x = normRu(a), y = normRu(b);
+  if (x === y) return true;
+  const min = Math.min(x.length, y.length);
+  let p = 0;
+  while (p < min && x[p] === y[p]) p++;
+  if (p < 3) return false;
+  return ruEndingOk(x.slice(p)) && ruEndingOk(y.slice(p));
+}
+
 function isSameLemma(correct: string, candidate: string, direction: 'en-ru' | 'ru-en'): boolean {
   const a = correct.trim().toLowerCase();
   const b = candidate.trim().toLowerCase();
   if (a === b) return true;
 
-  // Common prefix length
+  // Русские варианты (en-ru): стем + флективный хвост (см. isSameLemmaRu).
+  if (direction === 'en-ru') return isSameLemmaRu(a, b);
+
+  // English options: prefix-based morphology (gets/getting/get/play/played).
+  // For short words (<4 chars) require the shorter to be a complete prefix
+  // of the longer. For longer words require 4+ char prefix and small length diff.
   let prefix = 0;
   for (let i = 0; i < Math.min(a.length, b.length); i++) {
     if (a[i] === b[i]) prefix++;
     else break;
   }
-
-  if (direction === 'en-ru') {
-    // Russian options: rich suffix morphology — 5+ char common prefix
-    // catches almost all same-root variants:
-    //   получает / получать / получил / получение → "получ" = 5 chars
-    return prefix >= 5;
-  } else {
-    // English options: prefix-based morphology (gets/getting/get/play/played).
-    // For short words (<4 chars) require the shorter to be a complete prefix
-    // of the longer. For longer words require 4+ char prefix and small length diff.
-    const minLen = Math.min(a.length, b.length);
-    const lenDiff = Math.abs(a.length - b.length);
-    if (minLen < 4) return prefix === minLen && lenDiff <= 4;
-    return prefix >= 4 && lenDiff <= 5;
-  }
+  const minLen = Math.min(a.length, b.length);
+  const lenDiff = Math.abs(a.length - b.length);
+  if (minLen < 4) return prefix === minLen && lenDiff <= 4;
+  return prefix >= 4 && lenDiff <= 5;
 }
 
 export function generateOptions(
