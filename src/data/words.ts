@@ -1076,7 +1076,7 @@ export const WORDS: Card[] = [
   { id: 'basic_430', english: 'lady', russian: 'дама', synonyms: [], example: 'The **lady** at the counter was very kind.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 2, freqLevel: 2 },
   { id: 'basic_431', english: 'anymore', russian: 'больше не', synonyms: [], example: 'I do not live there **anymore**.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 2, freqLevel: 2 },
   { id: 'basic_432', english: 'playing', russian: 'играющий', synonyms: [], example: 'The kids are **playing** in the backyard.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 1, freqLevel: 2 },
-  { id: 'basic_433', english: 'gets', russian: 'получает', synonyms: [], example: 'She **gets** up early every day.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 1, freqLevel: 2 },
+  { id: 'basic_433', english: 'gets', russian: 'получает', synonyms: [], example: 'She **gets** a gift every year.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 1, freqLevel: 2 },
   { id: 'basic_434', english: 'reason', russian: 'причина', synonyms: [], example: 'There is a good **reason** for this decision.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 2, freqLevel: 2 },
   { id: 'basic_435', english: 'trouble', russian: 'проблема', synonyms: [], example: 'He is in serious **trouble** at school.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 2, freqLevel: 2 },
   { id: 'basic_436', english: 'city', russian: 'город', synonyms: [], example: 'New York is a huge **city**.', topicId: 'basic', topicIds: ['basic'], isCustom: false, difficulty: 1, freqLevel: 2 },

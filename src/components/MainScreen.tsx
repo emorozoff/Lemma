@@ -121,7 +121,8 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
   const manualInputRef = useRef<HTMLInputElement>(null);
   const manualSubmittedRef = useRef(false);
   // Финал (последний ввод перед запоминанием) теперь ВСЕГДА ручной ввод —
-  // настройка «ввод на финале» убрана. На финале проверка всегда строгая.
+  // настройка «ввод на финале» убрана. Строгость ввода — общая настройка
+  // «нестрогий ввод» (по умолчанию строго, включая финал).
   const isFinale = isFastInputEnabled() || currentLevel === MAX_LEVEL;
 
   // Mini-history: last 5 answered words
@@ -295,6 +296,14 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     }
   };
 
+  // Стабильная ссылка на актуальный loadQueue — чтобы дёргать дозагрузку из
+  // advance() без пересоздания колбэка и без устаревших замыканий.
+  const loadQueueRef = useRef(loadQueue);
+  loadQueueRef.current = loadQueue;
+  // true пока докручиваем следующую партию карточек (быстрый ввод) — чтобы
+  // не мелькал экран «НЕТ СЛОВ» между партиями.
+  const [refilling, setRefilling] = useState(false);
+
   const setupCard = useCallback((sc: SessionCard, cards: Card[]) => {
     const prefs = loadTopicPrefs();
     setOptions(generateOptions(sc.card, sc.direction, cards, prefs));
@@ -459,20 +468,22 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
       setPrevExample({ ...pendingExampleRef.current, animKey: Date.now() });
       pendingExampleRef.current = null;
     }
-    setQueueIdx(prev => {
-      const next = prev + 1;
-      setQueue(q => {
-        if (next < q.length) {
-          setupCard(q[next]!, allCards);
-        } else {
-          setAnswered(null);
-          setDisplayWord('');
-        }
-        return q;
-      });
-      return next;
-    });
-  }, [allCards, setupCard]);
+    const next = queueIdx + 1;
+    if (next < queue.length) {
+      setQueueIdx(next);
+      setupCard(queue[next]!, allCards);
+    } else if (isFastInputEnabled()) {
+      // Быстрый ввод: очередь кончилась — дозагружаем следующую партию, чтобы
+      // продолжать без остановки. Если карточек больше нет, loadQueue выставит
+      // пустую очередь и покажется «НЕТ СЛОВ».
+      setRefilling(true);
+      loadQueueRef.current(allCards).finally(() => setRefilling(false));
+    } else {
+      setQueueIdx(next);
+      setAnswered(null);
+      setDisplayWord('');
+    }
+  }, [queueIdx, queue, allCards, setupCard]);
 
   const handleFlag = useCallback(async () => {
     const sc = queue[queueIdx];
@@ -525,9 +536,9 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     manualSubmittedRef.current = true;
     const fast = isFastInputEnabled();
 
-    // Финал (не fast) — всегда строго. Быстрый ввод — мягко только если
-    // включена настройка «нестрогий ввод», иначе тоже строго.
-    const isCorrect = checkManualAnswer(manualInput, correctEnglish, fast && isLenientInputEnabled());
+    // «нестрогий ввод» (если включён) делает мягкими ВСЕ вводы, включая финал:
+    // ошибка в одну букву засчитывается. По умолчанию — строго (точное совпадение).
+    const isCorrect = checkManualAnswer(manualInput, correctEnglish, isLenientInputEnabled());
     setAnswered({ chosen: manualInput, correct: correctEnglish, wasCorrect: isCorrect });
     setHistory(h => [{ english: correctEnglish, wasCorrect: isCorrect, typed: manualInput }, ...h].slice(0, 5));
 
@@ -663,7 +674,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v1.2</span>
+          <span className="header-version">v1.21</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
@@ -686,7 +697,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
 
       {/* Card area */}
       <div className="card-area" onClick={handleMainZoneTap}>
-        {loading ? (
+        {loading || refilling ? (
           <div className="empty-state">
             <div className="empty-state-title">загрузка_</div>
           </div>
