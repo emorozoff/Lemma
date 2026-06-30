@@ -634,7 +634,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v0.992</span>
+          <span className="header-version">v0.993</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
@@ -677,6 +677,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
               {showXpToast && <div key={xpToastKey} className="xp-toast">▲ ОПЫТ</div>}
             </div>
             <div
+              key={currentCard.card.id}
               className="word-card"
               style={{ cursor: 'pointer' }}
               onClick={e => {
@@ -867,7 +868,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
             )}
           </div>
         ) : (
-          <div className="options-grid" onClick={handleMainZoneTap}>
+          <div key={currentCard.card.id} className="options-grid" onClick={handleMainZoneTap}>
             {options.map((opt, i) => {
               let cls = 'option-btn';
               if (answered) {

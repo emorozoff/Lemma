@@ -314,7 +314,7 @@ button {
   height: 100%;
   background: var(--accent-amber);
   border-radius: 1px;
-  transition: width 0.6s ease;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   
 }
 
@@ -902,7 +902,7 @@ button {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: transparent;
   z-index: 100;
   display: flex;
   align-items: flex-end;
@@ -1875,6 +1875,7 @@ button {
 
 .settings-confirm-overlay {
   z-index: 110;
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .settings-confirm-body {
@@ -1885,3 +1886,29 @@ button {
 }
 
 /* Scanline texture lives on the body background (behind all content) — see body{} */
+
+/* ─── Motion pass (v0.993) ───────────────────────────────────────────── */
+@keyframes card-in { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes opt-pop  { 0% { transform: scale(1); } 45% { transform: scale(1.05); } 100% { transform: scale(1); } }
+@keyframes opt-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+
+/* 1 — появление карточки */
+.word-card { animation: card-in 0.32s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+
+/* 2 — каскад вариантов (grid keyed by card.id → ремонтируется на новой карточке) */
+.options-grid .option-btn { animation: card-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) backwards; }
+.options-grid .option-btn:nth-child(2) { animation-delay: 0.05s; }
+.options-grid .option-btn:nth-child(3) { animation-delay: 0.10s; }
+.options-grid .option-btn:nth-child(4) { animation-delay: 0.15s; }
+
+/* 3, 4 — реакция на правильный (пых) и неправильный (шейк) ответ */
+.option-btn.correct { animation: opt-pop 0.4s ease; }
+.option-btn.wrong   { animation: opt-shake 0.42s ease; }
+
+/* 5 — нажатие */
+.nav-btn:active { transform: scale(0.96); }
+
+/* 7 — тема: плавный кроссфейд только во время переключения (класс снимается через 350мс) */
+html.theme-anim, html.theme-anim * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease !important;
+}

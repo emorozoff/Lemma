@@ -36,9 +36,14 @@ export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [mode]);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', resolved);
+    const html = document.documentElement;
+    html.setAttribute('data-theme', resolved);
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) metaTheme.setAttribute('content', META_COLOR[resolved]);
+    // Плавный кроссфейд цветов только на время переключения темы.
+    html.classList.add('theme-anim');
+    const t = setTimeout(() => html.classList.remove('theme-anim'), 350);
+    return () => clearTimeout(t);
   }, [resolved]);
 
   return (
