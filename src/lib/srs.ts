@@ -125,12 +125,14 @@ function levenshtein(a: string, b: string): number {
 }
 
 // Проверка ручного ввода. Игнорирует регистр и окружающие пробелы.
-// Короткие слова требуют точного совпадения; длинные допускают 1 опечатку.
-export function checkManualAnswer(input: string, correct: string): boolean {
+// По умолчанию СТРОГАЯ — нужно точное совпадение. При lenient=true длинные
+// слова (>3 символов) допускают 1 опечатку (levenshtein ≤ 1).
+export function checkManualAnswer(input: string, correct: string, lenient = false): boolean {
   const a = input.trim().toLowerCase();
   const b = correct.trim().toLowerCase();
   if (!a) return false;
   if (a === b) return true;
+  if (!lenient) return false;
   if (b.length <= 3) return false;
   return levenshtein(a, b) <= 1;
 }

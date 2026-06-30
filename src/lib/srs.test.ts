@@ -62,15 +62,18 @@ describe('checkManualAnswer', () => {
   it('exact match, case- and space-insensitive', () => {
     expect(checkManualAnswer('  Apple ', 'apple')).toBe(true);
   });
-  it('tolerates one typo in long words', () => {
-    expect(checkManualAnswer('aple', 'apple')).toBe(true);
+  it('strict by default: one typo is rejected', () => {
+    expect(checkManualAnswer('aple', 'apple')).toBe(false);
   });
-  it('rejects two+ typos', () => {
-    expect(checkManualAnswer('aplee', 'apple')).toBe(false);
+  it('lenient: tolerates one typo in long words', () => {
+    expect(checkManualAnswer('aple', 'apple', true)).toBe(true);
   });
-  it('short words (≤3) require exact match', () => {
-    expect(checkManualAnswer('bat', 'cat')).toBe(false);
-    expect(checkManualAnswer('cat', 'cat')).toBe(true);
+  it('lenient: rejects two+ typos', () => {
+    expect(checkManualAnswer('aplee', 'apple', true)).toBe(false);
+  });
+  it('lenient: short words (≤3) still require exact match', () => {
+    expect(checkManualAnswer('bat', 'cat', true)).toBe(false);
+    expect(checkManualAnswer('cat', 'cat', true)).toBe(true);
   });
   it('empty input is wrong', () => {
     expect(checkManualAnswer('', 'apple')).toBe(false);

@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from 'react';
 import { clearAllProgress, exportData, importData } from '../db';
-import { AudioMode, getAudioMode, setAudioMode, stopSpeech, isManualInputEnabled, setManualInputEnabled, isFastInputEnabled, setFastInputEnabled, preloadAllAudio } from '../lib/audio';
+import { AudioMode, getAudioMode, setAudioMode, stopSpeech, isLenientInputEnabled, setLenientInputEnabled, isFastInputEnabled, setFastInputEnabled, preloadAllAudio } from '../lib/audio';
 import { useTheme } from './ThemeProvider';
 import { THEME_ORDER, THEME_LABELS } from '../lib/theme';
 import { WORDS } from '../data/words';
@@ -23,7 +23,7 @@ const DISMISS_THRESHOLD = 100;
 
 const SettingsScreen: FC<Props> = ({ onClose, onOpenTopics, onOpenAddWord, onProgressReset }) => {
   const [audioMode, setAudioModeState] = useState<AudioMode>(getAudioMode);
-  const [manualOn, setManualOn] = useState(isManualInputEnabled);
+  const [lenientOn, setLenientOn] = useState(isLenientInputEnabled);
   const [confirmReset, setConfirmReset] = useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useTheme();
 
@@ -152,10 +152,10 @@ const SettingsScreen: FC<Props> = ({ onClose, onOpenTopics, onOpenAddWord, onPro
     if (next === 'off') stopSpeech();
   };
 
-  const toggleManualInput = () => {
-    const next = !manualOn;
-    setManualInputEnabled(next);
-    setManualOn(next);
+  const toggleLenient = () => {
+    const next = !lenientOn;
+    setLenientInputEnabled(next);
+    setLenientOn(next);
   };
 
   const handleReset = async () => {
@@ -185,10 +185,10 @@ const SettingsScreen: FC<Props> = ({ onClose, onOpenTopics, onOpenAddWord, onPro
           </span>
         </div>
 
-        <div className="settings-row" onClick={toggleManualInput}>
-          <span className="settings-label">ввод на финале</span>
-          <span className={`settings-toggle${manualOn ? ' on' : ''}`}>
-            {manualOn ? '◉ ВКЛ' : '◎ ВЫКЛ'}
+        <div className="settings-row" onClick={toggleLenient}>
+          <span className="settings-label">нестрогий ввод</span>
+          <span className={`settings-toggle${lenientOn ? ' on' : ''}`}>
+            {lenientOn ? '◉ ВКЛ' : '◎ ВЫКЛ'}
           </span>
         </div>
 

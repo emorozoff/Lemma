@@ -60,14 +60,18 @@ export function playLevelUp(): void {
 
 // ─── TTS (pre-generated MP3) ─────────────────────────────────────────────────
 
-const MANUAL_INPUT_KEY = 'manual_input_enabled';
+// Мягкая (нестрогая) проверка ручного ввода: при включении ошибка в одну
+// букву всё равно засчитывается. По умолчанию ВЫКЛ — ввод строгий (точное
+// совпадение). Финал (последний ввод, который запоминает слово) всегда
+// строгий независимо от этой настройки — см. MainScreen.
+const LENIENT_INPUT_KEY = 'lenient_input';
 
-export function isManualInputEnabled(): boolean {
-  return localStorage.getItem(MANUAL_INPUT_KEY) !== 'false';
+export function isLenientInputEnabled(): boolean {
+  return localStorage.getItem(LENIENT_INPUT_KEY) === 'true';
 }
 
-export function setManualInputEnabled(v: boolean): void {
-  localStorage.setItem(MANUAL_INPUT_KEY, v ? 'true' : 'false');
+export function setLenientInputEnabled(v: boolean): void {
+  localStorage.setItem(LENIENT_INPUT_KEY, v ? 'true' : 'false');
 }
 
 // Режим быстрого ввода: каждая карточка — ручной ввод английского по русскому,

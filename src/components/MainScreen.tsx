@@ -12,7 +12,7 @@ import {
   createInitialProgress, getCurrentLevel, getLevelProgress, checkManualAnswer,
   getToday, addDays, MAX_LEVEL,
 } from '../lib/srs';
-import { playCorrect, playWrong, playLevelUp, speakWord, speakSentence, stopSpeech, getAudioMode, isManualInputEnabled, isFastInputEnabled } from '../lib/audio';
+import { playCorrect, playWrong, playLevelUp, speakWord, speakSentence, stopSpeech, getAudioMode, isLenientInputEnabled, isFastInputEnabled } from '../lib/audio';
 import { hapticLight, hapticWarning, hapticSuccess } from '../lib/native';
 import { getTopicById } from '../data/topics';
 import { loadTopicPrefs, getWeight } from '../lib/topicPrefs';
@@ -120,7 +120,9 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
   const [showFirstLetter, setShowFirstLetter] = useState(false);
   const manualInputRef = useRef<HTMLInputElement>(null);
   const manualSubmittedRef = useRef(false);
-  const isFinale = isFastInputEnabled() || (currentLevel === MAX_LEVEL && isManualInputEnabled());
+  // Финал (последний ввод перед запоминанием) теперь ВСЕГДА ручной ввод —
+  // настройка «ввод на финале» убрана. На финале проверка всегда строгая.
+  const isFinale = isFastInputEnabled() || currentLevel === MAX_LEVEL;
 
   // Mini-history: last 5 answered words
   const [history, setHistory] = useState<{ english: string; wasCorrect: boolean; typed?: string }[]>([]);
@@ -523,7 +525,9 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     manualSubmittedRef.current = true;
     const fast = isFastInputEnabled();
 
-    const isCorrect = checkManualAnswer(manualInput, correctEnglish);
+    // Финал (не fast) — всегда строго. Быстрый ввод — мягко только если
+    // включена настройка «нестрогий ввод», иначе тоже строго.
+    const isCorrect = checkManualAnswer(manualInput, correctEnglish, fast && isLenientInputEnabled());
     setAnswered({ chosen: manualInput, correct: correctEnglish, wasCorrect: isCorrect });
     setHistory(h => [{ english: correctEnglish, wasCorrect: isCorrect, typed: manualInput }, ...h].slice(0, 5));
 
@@ -533,9 +537,8 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     if (isCorrect) playCorrect();
     else playWrong();
 
-    // В быстром вводе пропускаем медленное аудио слова/предложения (которое
-    // гейтит переход на ~1.6с) — переход делаем мгновенно ниже. Короткий
-    // звук «верно» (playCorrect) уже сыграл выше.
+    // Классический финал: аудио гейтит авто-переход (advance в колбэке).
+    // В быстром вводе аудио проигрывается НЕ блокируя переход — см. ниже.
     if (isCorrect && !fast) {
       if (sc.card.example && sc.direction === 'ru-en') {
         pendingExampleRef.current = { text: sc.card.example, word: sc.card.english };
@@ -572,11 +575,15 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
     }
 
     // Быстрый ввод — поток «слово за словом»: на верном ответе сразу к
-    // следующей карточке (клавиатура не пропадает, т.к. input персистентный);
-    // на ошибке даём ~1.4с увидеть правильный ответ, затем авто-переход.
+    // следующей карточке (клавиатура НЕ пропадает — input персистентный), а
+    // озвучку запускаем ПОСЛЕ перехода и не блокируем ею: advance() уже сделал
+    // stopSpeech, поэтому новый звук не отменится и звучит «поверх» следующей
+    // карточки (оборвётся, только если быстро ввести следующее слово).
+    // На ошибке — ~1.4с показать правильный ответ, затем авто-переход.
     if (fast) {
       if (isCorrect) {
         advance();
+        playByMode(correctEnglish, sc.card.example);
       } else {
         if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current);
         autoAdvanceRef.current = setTimeout(() => advance(), 1400);
@@ -656,7 +663,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v1.11</span>
+          <span className="header-version">v1.2</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
@@ -850,13 +857,13 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
                     onChange={e => {
                       const v = e.target.value.toLowerCase().replace(/[^a-z'\s-]/g, '');
                       setArchiveInput(v);
-                      if (v.length >= currentCard.card.english.length && checkManualAnswer(v, currentCard.card.english)) {
+                      if (v.length >= currentCard.card.english.length && checkManualAnswer(v, currentCard.card.english, isLenientInputEnabled())) {
                         playCorrect();
                         handleArchive();
                       }
                     }}
                     onKeyDown={e => {
-                      if (e.key === 'Enter' && checkManualAnswer(archiveInput, currentCard.card.english)) {
+                      if (e.key === 'Enter' && checkManualAnswer(archiveInput, currentCard.card.english, isLenientInputEnabled())) {
                         playCorrect();
                         handleArchive();
                       }
