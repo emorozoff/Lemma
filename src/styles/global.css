@@ -4,6 +4,7 @@
   --surface: #161616;
   --surface2: #1f1f1f;
   --border: #2b2b2b;
+  --border-strong: #474747;
   --text: #ededed;
   --text-muted: #8c8c8c;
   --text-dim: #5a5a5a;
@@ -38,6 +39,7 @@
   --surface: #f2f2f2;
   --surface2: #e6e6e6;
   --border: #d4d4d4;
+  --border-strong: #adadad;
   --text: #0f0f0f;
   --text-muted: #515151;
   --text-dim: #7a7a7a;
@@ -67,7 +69,7 @@ html, body {
 body {
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   user-select: none;
@@ -232,7 +234,7 @@ button {
 }
 
 .header-version {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
   letter-spacing: 1px;
   font-family: var(--font-ui);
@@ -247,7 +249,7 @@ button {
 
 .header-known-label {
   font-family: var(--font-ui);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   color: var(--text-muted);
   letter-spacing: 1px;
@@ -256,7 +258,7 @@ button {
 
 .header-known-count {
   font-family: var(--font-ui);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: -1px;
@@ -290,14 +292,14 @@ button {
 
 .level-title {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--accent-amber);
   letter-spacing: 1px;
 }
 
 .level-until {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -331,7 +333,7 @@ button {
 
 .word-card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border-strong);
   border-radius: 12px;
   padding: 24px 20px 20px;
   width: 100%;
@@ -346,7 +348,7 @@ button {
 }
 
 .card-topic-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -364,22 +366,22 @@ button {
   font-weight: 500;
 }
 
-.card-word.size-xs { font-size: 48px; }
-.card-word.size-sm { font-size: 40px; }
-.card-word.size-md { font-size: 32px; }
-.card-word.size-lg { font-size: 26px; }
-.card-word.size-xl { font-size: 20px; }
+.card-word.size-xs { font-size: 54px; }
+.card-word.size-sm { font-size: 45px; }
+.card-word.size-md { font-size: 36px; }
+.card-word.size-lg { font-size: 29px; }
+.card-word.size-xl { font-size: 23px; }
 
 .card-word.typing { color: var(--accent-green); }
 
 .card-hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
 .card-sentence {
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.65;
   color: var(--text-muted);
   text-align: center;
@@ -404,14 +406,14 @@ button {
 
 .card-translation {
   font-family: var(--font-ui);
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 500;
   color: var(--accent-green);
   letter-spacing: 0px;
 }
 
 .card-example {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
   font-style: italic;
   margin-top: 4px;
@@ -437,7 +439,7 @@ button {
 
 /* XP toast — стиль «▲ УРОВЕНЬ ПОВЫШЕН» из референса */
 .xp-toast {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--accent-green);
@@ -466,7 +468,7 @@ button {
 .prev-example {
   width: 100%;
   padding: 10px 24px 0;
-  font-size: 12px;
+  font-size: 14px;
   font-style: italic;
   text-align: center;
   line-height: 1.5;
@@ -504,20 +506,20 @@ button {
 
 .wrong-reveal-en {
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--text);
 }
 
 .wrong-reveal-sep {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--accent-red);
   opacity: 0.7;
 }
 
 .wrong-reveal-ru {
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--accent);
 }
@@ -536,7 +538,7 @@ button {
   padding: 18px;
   color: var(--accent-red);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 3px;
   cursor: pointer;
@@ -559,10 +561,10 @@ button {
 
 .option-btn {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border-strong);
   border-radius: 8px;
   padding: 14px 10px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text);
   text-align: center;
   transition: all 0.15s ease;
@@ -604,7 +606,7 @@ button {
 
 .manual-prompt {
   font-family: var(--font-ui);
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
   color: var(--accent-amber);
   letter-spacing: 0.5px;
@@ -626,7 +628,7 @@ button {
   justify-content: center;
   border-bottom: 2px solid var(--border);
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 29px;
   color: var(--text);
   text-transform: uppercase;
   transition: all 0.15s;
@@ -673,7 +675,7 @@ button {
   padding: 16px;
   color: var(--accent-green);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 3px;
   cursor: pointer;
@@ -702,7 +704,7 @@ button {
 
 .mini-history-word {
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.5px;
   cursor: pointer;
 }
@@ -735,7 +737,7 @@ button {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -749,7 +751,7 @@ button {
 
 .nav-btn.center {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--accent-amber);
   letter-spacing: 2px;
@@ -772,7 +774,7 @@ button {
 
 .empty-state-title {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: 2px;
@@ -780,7 +782,7 @@ button {
 }
 
 .empty-state-sub {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   line-height: 1.6;
   white-space: pre-line;
@@ -788,7 +790,7 @@ button {
 
 .empty-state-no-words {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--text-dim);
   letter-spacing: 4px;
@@ -803,14 +805,14 @@ button {
 }
 
 .empty-state-no-words-line {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
 
 .empty-state-no-words-sep {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-dim);
   letter-spacing: 2px;
   margin: 4px 0;
@@ -846,7 +848,7 @@ button {
 
 .info-popup-title {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: 2px;
@@ -861,7 +863,7 @@ button {
 }
 
 .info-popup-body p {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
   line-height: 1.6;
 }
@@ -878,7 +880,7 @@ button {
   padding: 12px;
   color: var(--accent-green);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 2px;
   cursor: pointer;
   transition: background 0.15s;
@@ -932,7 +934,7 @@ button {
 
 .modal-title {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: 2px;
@@ -941,7 +943,7 @@ button {
 
 /* Topics */
 .topics-pref-hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   margin-bottom: 14px;
   line-height: 1.5;
@@ -969,7 +971,7 @@ button {
 }
 
 .topic-adult-header {
-  font-size: 10px;
+  font-size: 11px;
   font-family: 'IBM Plex Mono', monospace;
   letter-spacing: 0.15em;
   color: var(--accent-red);
@@ -1017,7 +1019,7 @@ button {
 }
 
 .level-row-icon {
-  font-size: 12px;
+  font-size: 14px;
   width: 14px;
   flex-shrink: 0;
   text-align: center;
@@ -1032,19 +1034,19 @@ button {
 }
 
 .level-row-title {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.3;
 }
 
 .level-row-desc {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.55;
   font-weight: 400;
   line-height: 1.3;
 }
 
 .level-row-min {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.4;
   flex-shrink: 0;
   align-self: flex-start;
@@ -1062,7 +1064,7 @@ button {
 }
 
 .level-row-current .level-row-title {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .level-row-current .level-row-desc {
@@ -1087,7 +1089,7 @@ button {
 }
 
 .levels-current-label {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--accent-green);
@@ -1097,7 +1099,7 @@ button {
 
 .levels-current-title {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 25px;
   color: var(--accent-green);
   letter-spacing: 1px;
   margin-bottom: 6px;
@@ -1105,7 +1107,7 @@ button {
 }
 
 .levels-current-desc {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
   line-height: 1.5;
   margin-bottom: 14px;
@@ -1132,7 +1134,7 @@ button {
 }
 
 .levels-current-until {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   opacity: 0.6;
 }
@@ -1198,10 +1200,10 @@ button {
   opacity: 0.9;
 }
 
-.topic-name { font-size: 13px; color: var(--text); }
+.topic-name { font-size: 15px; color: var(--text); }
 
 .topic-progress-count {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -1223,7 +1225,7 @@ button {
 /* Pref toggle button */
 .pref-toggle {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 1px;
   padding: 4px 12px;
@@ -1279,7 +1281,7 @@ button {
 
 .topics-bulk-btn {
   font-family: var(--font-ui);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   padding: 3px 8px;
   background: color-mix(in srgb, var(--accent) 8%, transparent);
@@ -1307,7 +1309,7 @@ button {
 }
 
 .legend-item {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
 }
 
@@ -1321,7 +1323,7 @@ button {
 .form-group { display: flex; flex-direction: column; gap: 4px; }
 
 .form-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1334,7 +1336,7 @@ button {
   padding: 10px 12px;
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.15s;
   width: 100%;
@@ -1352,7 +1354,7 @@ button {
   padding: 14px;
   color: var(--accent-green);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 2px;
   cursor: pointer;
@@ -1371,7 +1373,7 @@ button {
 }
 
 .stats-counter-info p {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   line-height: 1.6;
   margin-top: 6px;
@@ -1379,7 +1381,7 @@ button {
 
 .stats-header {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: 2px;
@@ -1403,14 +1405,14 @@ button {
 
 .stat-number {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--accent-amber);
   line-height: 1;
 }
 
 .stat-label {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1418,7 +1420,7 @@ button {
 }
 
 .stats-section-title {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1433,7 +1435,7 @@ button {
   border: 1px solid var(--text-muted);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   padding: 3px 8px;
   cursor: pointer;
@@ -1443,10 +1445,10 @@ button {
 
 .level-dist { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
 .level-dist-row { display: flex; align-items: center; gap: 8px; }
-.level-dist-label { font-size: 11px; color: var(--text-muted); width: 56px; flex-shrink: 0; }
+.level-dist-label { font-size: 12px; color: var(--text-muted); width: 56px; flex-shrink: 0; }
 .level-dist-bar-bg { flex: 1; height: 10px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
 .level-dist-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-.level-dist-count { font-size: 11px; color: var(--text-dim); width: 28px; text-align: right; flex-shrink: 0; }
+.level-dist-count { font-size: 12px; color: var(--text-dim); width: 28px; text-align: right; flex-shrink: 0; }
 
 .activity-grid { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 24px; }
 .activity-cell { width: 12px; height: 12px; border-radius: 2px; background: var(--surface2); border: 1px solid var(--border); }
@@ -1479,10 +1481,10 @@ button {
   animation: level-up-pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.levelup-icon { font-size: 48px; margin-bottom: 10px; }
-.levelup-label { font-size: 9px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
-.levelup-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--accent-amber); letter-spacing: 2px; margin-bottom: 10px; line-height: 1.3; }
-.levelup-description { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+.levelup-icon { font-size: 54px; margin-bottom: 10px; }
+.levelup-label { font-size: 10px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+.levelup-title { font-family: var(--font-display); font-size: 23px; font-weight: 700; color: var(--accent-amber); letter-spacing: 2px; margin-bottom: 10px; line-height: 1.3; }
+.levelup-description { font-size: 15px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
 .levelup-btn {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   border: 1px solid var(--accent-amber);
@@ -1490,7 +1492,7 @@ button {
   padding: 12px 20px;
   color: var(--accent-amber);
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 2px;
   cursor: pointer;
@@ -1508,7 +1510,7 @@ button {
 }
 
 .debug-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--accent-green);
@@ -1528,7 +1530,7 @@ button {
   border-radius: 8px;
   padding: 14px 10px;
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
@@ -1606,32 +1608,32 @@ button {
 }
 
 .archive-confirm-title {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
 
 .archive-confirm-word {
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 700;
   color: var(--accent-green);
   letter-spacing: 1px;
 }
 
 .archive-confirm-sep {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
 }
 
 .archive-confirm-translation {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text);
   margin-bottom: 8px;
 }
 
 .archive-confirm-hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 0.5px;
   text-align: center;
@@ -1644,7 +1646,7 @@ button {
   border: 1px solid var(--accent-green);
   border-radius: 8px;
   color: var(--accent-green);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 2px;
   padding: 14px;
@@ -1662,7 +1664,7 @@ button {
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 1px;
   padding: 12px;
   transition: border-color 0.15s;
@@ -1681,7 +1683,7 @@ button {
 }
 
 .flag-btn {
-  font-size: 19px;
+  font-size: 21px;
   line-height: 1;
   color: var(--accent);
   opacity: 0.45;
@@ -1745,23 +1747,23 @@ button {
 .flagged-en {
   color: var(--accent-green);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .flagged-sep {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .flagged-ru {
   color: var(--text);
-  font-size: 13px;
+  font-size: 15px;
   flex: 1;
 }
 
 .flagged-remove {
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 15px;
   padding: 2px 6px;
   border: none;
   background: none;
@@ -1771,7 +1773,7 @@ button {
 .flagged-remove:active { color: var(--accent-red); }
 
 .flagged-example {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   font-style: italic;
   line-height: 1.4;
@@ -1785,7 +1787,7 @@ button {
 }
 
 .flagged-opt {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -1799,7 +1801,7 @@ button {
 
 /* Stats archived row */
 .stats-archived-row {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-align: center;
@@ -1827,7 +1829,7 @@ button {
 }
 
 .settings-label {
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 1px;
   text-transform: lowercase;
   color: var(--text);
@@ -1835,7 +1837,7 @@ button {
 
 .settings-toggle {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 2px;
   color: var(--text-muted);
 }
@@ -1846,7 +1848,7 @@ button {
 
 .settings-arrow {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-muted);
 }
 
@@ -1861,7 +1863,7 @@ button {
   border: 1px solid var(--accent-red);
   color: var(--accent-red);
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 2px;
   text-transform: lowercase;
   border-radius: 8px;
@@ -1879,7 +1881,7 @@ button {
 }
 
 .settings-confirm-body {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   line-height: 1.5;
   padding: 8px 4px 16px;
