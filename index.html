@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#0a0a0a" />
     <script>
-      (function(){try{var m=localStorage.getItem('lemma_theme');var d=(m==='light'||m==='dark')?m:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',d);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();
+      (function(){try{var m=localStorage.getItem('lemma_theme');document.documentElement.setAttribute('data-theme',m==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
     </script>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

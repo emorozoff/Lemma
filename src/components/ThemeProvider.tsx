@@ -8,8 +8,8 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  mode: 'system',
-  resolved: 'dark',
+  mode: 'light',
+  resolved: 'light',
   setMode: () => {},
 });
 
@@ -26,14 +26,6 @@ export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setModeState(m);
     setResolved(resolveTheme(m));
   }, []);
-
-  useEffect(() => {
-    if (mode !== 'system') return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => setResolved(resolveTheme('system'));
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, [mode]);
 
   useEffect(() => {
     const html = document.documentElement;
