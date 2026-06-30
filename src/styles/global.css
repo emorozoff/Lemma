@@ -1577,7 +1577,9 @@ button {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 0;
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  /* Нейтральная «заливка-загрузка»: ни красный (=верно), ни серый-muted (=неверно),
+     а чернильный wash от цвета текста — не намекает на правильность ответа. */
+  background: color-mix(in srgb, var(--text) 14%, transparent);
   pointer-events: none;
   border-radius: 8px 0 0 8px;
 }
@@ -1588,7 +1590,7 @@ button {
 }
 
 .option-btn.lp-pressing {
-  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  border-color: color-mix(in srgb, var(--text) 32%, transparent);
   transition: border-color 0.15s 0.15s;
 }
 

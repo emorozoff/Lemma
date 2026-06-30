@@ -674,7 +674,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v1.24</span>
+          <span className="header-version">v1.241</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>
@@ -933,8 +933,9 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats }) =>
                 else if (opt === answered.chosen) cls += ' wrong';
                 else cls += ' dimmed';
               }
-              // ALL buttons animate during a hold — no hint which one is correct
-              if (lpOpt !== null && !answered) cls += ' lp-pressing';
+              // Анимация загрузки только на нажатой кнопке; цвет нейтральный (см. CSS),
+              // не выдаёт верность — пользователь и так знает, что нажал.
+              if (lpOpt === opt && !answered) cls += ' lp-pressing';
 
               const cancelLp = () => {
                 if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
