@@ -1925,3 +1925,70 @@ button {
 html.theme-anim, html.theme-anim * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease !important;
 }
+
+/* 8 — Онбординг-тур (новые пользователи): подсветка + красная стрелка + подпись */
+.ob-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ob-overlay--dim { background: rgba(10, 10, 10, 0.62); }
+.ob-spot {
+  position: fixed;
+  border-radius: 10px;
+  border: 2.5px solid var(--accent);
+  box-shadow:
+    0 0 0 9999px rgba(10, 10, 10, 0.62),
+    0 0 0 5px color-mix(in srgb, var(--accent) 30%, transparent);
+  pointer-events: none;
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+.ob-arrow {
+  position: fixed;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+.ob-arrow[data-dir="up"] {
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 11px solid var(--accent);
+}
+.ob-arrow[data-dir="down"] {
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 11px solid var(--accent);
+}
+.ob-cap {
+  position: fixed;
+  z-index: 10000;
+  text-align: center;
+  pointer-events: none;
+}
+.ob-cap-chip {
+  display: inline-block;
+  max-width: min(320px, calc(100vw - 24px));
+  background: var(--accent);
+  color: #fff;
+  font: 500 13px/1.45 var(--font-ui);
+  padding: 9px 13px;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+}
+.ob-hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  text-align: center;
+  color: #fff;
+  font: 400 12px var(--font-ui);
+  opacity: 0.85;
+  z-index: 10000;
+  pointer-events: none;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+}

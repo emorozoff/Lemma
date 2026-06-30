@@ -5,7 +5,10 @@ import StatsScreen from './components/StatsScreen';
 import SettingsScreen from './components/SettingsScreen';
 import AddWordModal from './components/AddWordModal';
 import SwearingBlast from './components/SwearingBlast';
+import OnboardingTour from './components/OnboardingTour';
 import { applyStatusBarTheme, hideSplash } from './lib/native';
+
+const ONBOARDED_KEY = 'lemma_onboarded';
 
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
@@ -14,6 +17,14 @@ export default function App() {
   const [showAddWord, setShowAddWord] = useState(false);
   const [prefsVersion, setPrefsVersion] = useState(0);
   const [blastActive, setBlastActive] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    try { return localStorage.getItem(ONBOARDED_KEY) !== 'true'; } catch { return false; }
+  });
+
+  const finishOnboarding = useCallback(() => {
+    try { localStorage.setItem(ONBOARDED_KEY, 'true'); } catch { /* ignore */ }
+    setShowOnboarding(false);
+  }, []);
 
   useEffect(() => {
     applyStatusBarTheme('dark');
@@ -110,6 +121,10 @@ export default function App() {
       )}
 
       {blastActive && <SwearingBlast onDone={handleBlastDone} />}
+
+      {showOnboarding && !showSettings && !showTopics && !showStats && !showAddWord && (
+        <OnboardingTour onFinish={finishOnboarding} />
+      )}
     </div>
   );
 }
