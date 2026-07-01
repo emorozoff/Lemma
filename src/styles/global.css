@@ -93,16 +93,18 @@ body {
   background-color: var(--bg);
 }
 
-/* Фиксированный фон-подложка на ВЕСЬ экран (large viewport) — гарантирует, что
-   при любых расхождениях высоты снизу не будет голой белой области. Лежит под
-   всем контентом, клики не перехватывает. */
+/* Фиксированный фон-подложка — НАМЕРЕННО вылезает за все края вьюпорта на 120px.
+   fixed позиционируется относительно layout-вьюпорта, который на некоторых
+   устройствах/standalone короче физического экрана (safe-area home-индикатора)
+   → снизу оставалась голая белая полоса. Оверлап гарантирует, что скан-текстура
+   покрывает весь физический экран. Лежит под всем контентом, клики не ловит. */
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100lvh;
+  top: -120px;
+  bottom: -120px;
+  left: -120px;
+  right: -120px;
   background: var(--bg-scanlines);
   background-color: var(--bg);
   z-index: -1;
@@ -246,6 +248,11 @@ button {
   overflow: hidden;
   padding-top: var(--safe-top);
   padding-bottom: var(--safe-bottom);
+  /* Собственный фон-текстура: заполняет и padding-bottom (safe-area home-
+     индикатора) — иначе снизу видна голая белая полоса. Фон элемента красит и
+     область под padding. */
+  background: var(--bg-scanlines);
+  background-color: var(--bg);
 }
 
 /* Header */
