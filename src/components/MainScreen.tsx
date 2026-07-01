@@ -12,7 +12,7 @@ import {
   createInitialProgress, getCurrentLevel, getLevelProgress, checkManualAnswer,
   getToday, addDays, MAX_LEVEL,
 } from '../lib/srs';
-import { playCorrect, playWrong, playLevelUp, speakWord, speakSentence, stopSpeech, getAudioMode, isLenientInputEnabled, isFastInputEnabled } from '../lib/audio';
+import { playCorrect, playWrong, playLevelUp, speakWord, speakSentence, prepareWord, prepareSentence, stopSpeech, getAudioMode, isLenientInputEnabled, isFastInputEnabled } from '../lib/audio';
 import { hapticLight, hapticWarning, hapticSuccess } from '../lib/native';
 import { getTopicById } from '../data/topics';
 import { loadTopicPrefs, getWeight } from '../lib/topicPrefs';
@@ -202,6 +202,17 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats, onOp
       const p = await getProgress(sc.card.id);
       setCurrentLevel(p?.level ?? 0);
     })();
+  }, [queue, queueIdx]);
+
+  // Предекод аудио текущей карточки, пока пользователь думает → при верном
+  // ответе озвучка стартует мгновенно (декод MP3 уже сделан). См. audio.ts.
+  useEffect(() => {
+    const sc = queue[queueIdx];
+    if (!sc) return;
+    const mode = getAudioMode();
+    if (mode === 'off') return;
+    if (mode === 'sentence' && sc.card.example) prepareSentence(sc.card.example);
+    else prepareWord(sc.card.english);
   }, [queue, queueIdx]);
 
   // Auto-check on level 4 when typed length matches target
@@ -700,7 +711,7 @@ const MainScreen: FC<Props> = ({ prefsVersion, onOpenSettings, onOpenStats, onOp
         <div className="header-logo" onClick={() => setDebugOpen(true)} style={{ cursor: 'pointer' }}>
           lemma_
 
-          <span className="header-version">v1.31</span>
+          <span className="header-version">v1.311</span>
         </div>
         <div className="header-known" onClick={onOpenStats} style={{ cursor: 'pointer' }}>
           <span className="header-known-label">знаю слов:</span>

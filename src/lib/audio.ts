@@ -92,6 +92,62 @@ const AUDIO_CDN = 'https://pub-00a95b8df66f46f597ce91f5544ae35f.r2.dev';
 let currentSource: AudioBufferSourceNode | null = null;
 let speechEndCallback: (() => void) | null = null;
 
+// ─── Кеш ДЕКОДИРОВАННОГО аудио (мгновенное воспроизведение) ──────────────────
+// «Загрузить все аудио» греет только HTTP-кеш service worker'а — при каждом
+// воспроизведении всё равно шёл fetch → arrayBuffer → decodeAudioData (декод
+// MP3 в PCM — это и есть задержка). Здесь держим уже декодированные AudioBuffer
+// в памяти + предекодируем аудио текущей карточки, пока пользователь думает,
+// чтобы при верном ответе play был синхронным и моментальным.
+const bufferCache = new Map<string, AudioBuffer>();
+const inflight = new Map<string, Promise<AudioBuffer | null>>();
+const hashMemo = new Map<string, string>();
+const MAX_CACHED = 80; // ~декодированных клипов в памяти (LRU-эвикшн по вставке)
+
+function cachePut(key: string, buf: AudioBuffer): void {
+  bufferCache.set(key, buf);
+  if (bufferCache.size > MAX_CACHED) {
+    const oldest = bufferCache.keys().next().value;
+    if (oldest !== undefined) bufferCache.delete(oldest);
+  }
+}
+
+// Возвращает декодированный AudioBuffer: из кеша мгновенно, иначе fetch+decode
+// (с дедупликацией параллельных запросов через inflight). null при ошибке.
+function loadBuffer(key: string, url: string): Promise<AudioBuffer | null> {
+  const cached = bufferCache.get(key);
+  if (cached) return Promise.resolve(cached);
+  const pending = inflight.get(key);
+  if (pending) return pending;
+  const ac = getCtx();
+  const p = fetch(url)
+    .then(r => { if (!r.ok) throw new Error(r.statusText); return r.arrayBuffer(); })
+    .then(buf => ac.decodeAudioData(buf))
+    .then(audioBuffer => { cachePut(key, audioBuffer); inflight.delete(key); return audioBuffer; })
+    .catch(() => { inflight.delete(key); return null; });
+  inflight.set(key, p);
+  return p;
+}
+
+// Синхронно запускает уже декодированный буфер. Ставит speechEndCallback/currentSource.
+function playBuffer(buf: AudioBuffer, onEnd: () => void): void {
+  const ac = getCtx();
+  if (ac.state === 'suspended') ac.resume();
+  speechEndCallback = onEnd;
+  const source = ac.createBufferSource();
+  source.buffer = buf;
+  source.connect(ac.destination);
+  currentSource = source;
+  source.onended = () => {
+    if (speechEndCallback) {
+      const cb = speechEndCallback;
+      speechEndCallback = null;
+      currentSource = null;
+      cb();
+    }
+  };
+  source.start(0);
+}
+
 export type AudioMode = 'word' | 'sentence' | 'off';
 
 export function getAudioMode(): AudioMode {
@@ -123,42 +179,34 @@ function toSlug(word: string): string {
     .replace(/^_|_$/g, '');
 }
 
+// Предекодирует аудио слова в фоне (вызывать при показе карточки), чтобы
+// последующий speakWord сыграл мгновенно из кеша. No-op если уже в кеше.
+export function prepareWord(word: string): void {
+  const slug = toSlug(word);
+  if (!slug) return;
+  const key = `w:${slug}`;
+  if (bufferCache.has(key)) return;
+  loadBuffer(key, `${AUDIO_CDN}/${slug}.mp3`);
+}
+
 export function speakWord(word: string, onEnd: () => void): void {
   stopSpeech();
   const slug = toSlug(word);
   if (!slug) { onEnd(); return; }
 
+  const key = `w:${slug}`;
+  const cached = bufferCache.get(key);
+  if (cached) { playBuffer(cached, onEnd); return; } // мгновенно
+
+  // Не декодировано заранее — грузим, затем играем (если не отменили).
   const ac = getCtx();
   if (ac.state === 'suspended') ac.resume();
   speechEndCallback = onEnd;
-
-  const url = `${AUDIO_CDN}/${slug}.mp3`;
-  fetch(url)
-    .then(r => { if (!r.ok) throw new Error(r.statusText); return r.arrayBuffer(); })
-    .then(buf => ac.decodeAudioData(buf))
-    .then(audioBuffer => {
-      if (!speechEndCallback) return;
-      const source = ac.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(ac.destination);
-      currentSource = source;
-      source.onended = () => {
-        if (speechEndCallback) {
-          const cb = speechEndCallback;
-          speechEndCallback = null;
-          currentSource = null;
-          cb();
-        }
-      };
-      source.start(0);
-    })
-    .catch(() => {
-      if (speechEndCallback) {
-        const cb = speechEndCallback;
-        speechEndCallback = null;
-        cb();
-      }
-    });
+  loadBuffer(key, `${AUDIO_CDN}/${slug}.mp3`).then(buf => {
+    if (!speechEndCallback) return; // stopSpeech успел отменить
+    if (!buf) { const cb = speechEndCallback; speechEndCallback = null; cb(); return; }
+    playBuffer(buf, speechEndCallback);
+  });
 }
 
 export function stopSpeech(): void {
@@ -200,14 +248,29 @@ export async function preloadAllAudio(
 }
 
 async function sentenceHash(text: string): Promise<string> {
+  const memo = hashMemo.get(text);
+  if (memo) return memo;
   const data = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', data);
   const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  return hex.slice(0, 16);
+  const short = hex.slice(0, 16);
+  hashMemo.set(text, short);
+  return short;
 }
 
 function cleanExample(example: string): string {
   return example.replace(/\*\*([^*]+)\*\*/g, '$1');
+}
+
+// Предекодирует аудио предложения в фоне (вызывать при показе карточки).
+export function prepareSentence(example: string): void {
+  const clean = cleanExample(example);
+  if (!clean) return;
+  sentenceHash(clean).then(hash => {
+    const key = `s:${hash}`;
+    if (bufferCache.has(key)) return;
+    loadBuffer(key, `${AUDIO_CDN}/s_${hash}.mp3`);
+  });
 }
 
 export function speakSentence(example: string, onEnd: () => void): void {
@@ -219,31 +282,15 @@ export function speakSentence(example: string, onEnd: () => void): void {
   if (ac.state === 'suspended') ac.resume();
   speechEndCallback = onEnd;
 
-  sentenceHash(clean)
-    .then(hash => fetch(`${AUDIO_CDN}/s_${hash}.mp3`))
-    .then(r => { if (!r.ok) throw new Error(r.statusText); return r.arrayBuffer(); })
-    .then(buf => ac.decodeAudioData(buf))
-    .then(audioBuffer => {
+  sentenceHash(clean).then(hash => {
+    if (!speechEndCallback) return; // stopSpeech успел отменить
+    const key = `s:${hash}`;
+    const cached = bufferCache.get(key);
+    if (cached) { playBuffer(cached, speechEndCallback); return; } // мгновенно
+    loadBuffer(key, `${AUDIO_CDN}/s_${hash}.mp3`).then(buf => {
       if (!speechEndCallback) return;
-      const source = ac.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(ac.destination);
-      currentSource = source;
-      source.onended = () => {
-        if (speechEndCallback) {
-          const cb = speechEndCallback;
-          speechEndCallback = null;
-          currentSource = null;
-          cb();
-        }
-      };
-      source.start(0);
-    })
-    .catch(() => {
-      if (speechEndCallback) {
-        const cb = speechEndCallback;
-        speechEndCallback = null;
-        cb();
-      }
+      if (!buf) { const cb = speechEndCallback; speechEndCallback = null; cb(); return; }
+      playBuffer(buf, speechEndCallback);
     });
+  });
 }
