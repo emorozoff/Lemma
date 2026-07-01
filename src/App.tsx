@@ -45,10 +45,14 @@ export default function App() {
     const apply = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        // Сжимаем layout под клавиатуру ТОЛЬКО когда реально фокус в поле ввода.
-        // Иначе разница innerHeight−visualViewport на некоторых устройствах/OS
-        // (напр. новые iPhone) может ложно сработать в покое → .app укорачивается,
-        // внизу появляется пустая полоса, а нижняя навигация уезжает вверх.
+        // Высоту приложения ВСЕГДА задаём измеренной высотой вьюпорта, а не
+        // полагаемся на CSS 100dvh: на некоторых устройствах/standalone-режиме
+        // (напр. iPhone 17 Air) 100dvh короче реального экрана → снизу пустая
+        // полоса, а нижняя навигация уезжает вверх.
+        // — В покое берём window.innerHeight (полный layout-вьюпорт = весь экран).
+        // — Когда реально в фокусе поле ввода и клавиатура поджала видимую
+        //   область — берём visualViewport.height, чтобы поле осталось над
+        //   клавиатурой.
         const ae = document.activeElement as HTMLElement | null;
         const typing = !!ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable);
         const kb = Math.max(0, window.innerHeight - vv.height - Math.max(0, vv.offsetTop));
@@ -56,7 +60,7 @@ export default function App() {
           root.style.setProperty('--app-h', `${Math.round(vv.height)}px`);
           root.style.setProperty('--kb-inset', `${Math.round(kb)}px`);
         } else {
-          root.style.removeProperty('--app-h');
+          root.style.setProperty('--app-h', `${Math.round(window.innerHeight)}px`);
           root.style.removeProperty('--kb-inset');
         }
       });
@@ -64,6 +68,8 @@ export default function App() {
     apply();
     vv.addEventListener('resize', apply);
     vv.addEventListener('scroll', apply);
+    window.addEventListener('resize', apply); // поворот/смена размеров окна
+    window.addEventListener('orientationchange', apply);
     // Пере-синк при фокусе/расфокусе поля (iOS отдаёт устаревшую высоту сразу
     // после закрытия клавиатуры).
     const onFocusIn = () => apply();
@@ -73,6 +79,8 @@ export default function App() {
     return () => {
       vv.removeEventListener('resize', apply);
       vv.removeEventListener('scroll', apply);
+      window.removeEventListener('resize', apply);
+      window.removeEventListener('orientationchange', apply);
       window.removeEventListener('focusin', onFocusIn);
       window.removeEventListener('focusout', onFocusOut);
       cancelAnimationFrame(raf);
